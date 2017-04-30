@@ -95,7 +95,7 @@ static char UIScrollViewPullToRefreshView;
     self.pullToRefreshView = view;
     self.showsPullToRefresh = YES;
     
-    [self addObserver:view forKeyPath:@"pan.state" options:NSKeyValueObservingOptionNew context:nil];
+    [self.panGestureRecognizer addTarget:self action:@selector(gestureRecognizerUpdate:)];
 }
 
 - (void)addPullToRefresh:(Class)pullToRefreshClass withActionHandler:(void (^)(void))actionHandler
@@ -211,8 +211,12 @@ static char UIScrollViewPullToRefreshView;
     }
 }
 
-- (void)dealloc {
-    [self removeObserver:self.pullToRefreshView forKeyPath:@"pan.state"];
+- (void)gestureRecognizerUpdate:(UIPanGestureRecognizer *)recognizer {
+    if (recognizer.state == UIGestureRecognizerStateEnded) {
+        if (self.contentSize.width - self.bounds.size.width + SVPullToRefreshViewWidth < self.contentOffset.x) {
+            self.pullToRefreshView.state = SVPullToRefreshStateLoading;
+        }
+    }
 }
 
 @end
@@ -540,15 +544,6 @@ static char UIScrollViewPullToRefreshView;
     }
     else if([keyPath isEqualToString:@"frame"])
         [self layoutSubviews];
-    else if ([keyPath isEqualToString:@"pan.state"]) {
-        id newVal = [change objectForKey:NSKeyValueChangeNewKey];
-        UIGestureRecognizerState recognizerState = [newVal integerValue];
-        if (recognizerState == UIGestureRecognizerStateEnded) {
-            if (self.scrollView.contentSize.width - self.scrollView.bounds.size.width + SVPullToRefreshViewWidth < self.scrollView.contentOffset.x) {
-                self.state = SVPullToRefreshStateLoading;
-            }
-        }
-    }
 }
 
 - (void)scrollViewDidScroll:(CGPoint)contentOffset {
