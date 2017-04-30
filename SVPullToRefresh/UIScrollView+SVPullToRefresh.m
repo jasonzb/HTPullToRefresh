@@ -94,6 +94,8 @@ static char UIScrollViewPullToRefreshView;
     
     self.pullToRefreshView = view;
     self.showsPullToRefresh = YES;
+    
+    [self addObserver:view forKeyPath:@"pan.state" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)addPullToRefresh:(Class)pullToRefreshClass withActionHandler:(void (^)(void))actionHandler
@@ -207,6 +209,10 @@ static char UIScrollViewPullToRefreshView;
         self.internalPullToRefreshViews = refreshViews;
         return refreshViews;
     }
+}
+
+- (void)dealloc {
+    [self removeObserver:self.pullToRefreshView forKeyPath:@"pan.state"];
 }
 
 @end
@@ -534,7 +540,15 @@ static char UIScrollViewPullToRefreshView;
     }
     else if([keyPath isEqualToString:@"frame"])
         [self layoutSubviews];
-
+    else if ([keyPath isEqualToString:@"pan.state"]) {
+        id newVal = [change objectForKey:NSKeyValueChangeNewKey];
+        UIGestureRecognizerState recognizerState = [newVal integerValue];
+        if (recognizerState == UIGestureRecognizerStateEnded) {
+            if (self.scrollView.contentSize.width - self.scrollView.bounds.size.width + SVPullToRefreshViewWidth < self.scrollView.contentOffset.x) {
+                self.state = SVPullToRefreshStateLoading;
+            }
+        }
+    }
 }
 
 - (void)scrollViewDidScroll:(CGPoint)contentOffset {
@@ -554,8 +568,9 @@ static char UIScrollViewPullToRefreshView;
                 scrollOffsetThreshold = MAX(self.scrollView.contentSize.width - self.scrollView.bounds.size.width, 0) + self.bounds.size.width + self.originalRightInset;
         }
 
-        if(!self.scrollView.isDragging && self.state == SVPullToRefreshStateTriggered)
-            self.state = SVPullToRefreshStateLoading;
+        if(!self.scrollView.isDragging && self.state == SVPullToRefreshStateTriggered) {
+//            self.state = SVPullToRefreshStateLoading;
+        }
         else if(contentOffset.y < scrollOffsetThreshold && self.scrollView.isDragging && self.state == SVPullToRefreshStateStopped && self.position == SVPullToRefreshPositionTop)
             self.state = SVPullToRefreshStateTriggered;
         else if(contentOffset.y >= scrollOffsetThreshold && self.state != SVPullToRefreshStateStopped && self.position == SVPullToRefreshPositionTop)
@@ -838,7 +853,7 @@ static char UIScrollViewPullToRefreshView;
     if(_state == newState)
         return;
 
-    SVPullToRefreshState previousState = _state;
+//    SVPullToRefreshState previousState = _state;
     _state = newState;
 
     [self setNeedsLayout];
@@ -856,7 +871,7 @@ static char UIScrollViewPullToRefreshView;
         case SVPullToRefreshStateLoading:
             [self setScrollViewContentInsetForLoading];
 
-            if(previousState == SVPullToRefreshStateTriggered && pullToRefreshActionHandler) {
+            if(pullToRefreshActionHandler) {
                 pullToRefreshActionHandler();
             }
 

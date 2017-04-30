@@ -34,7 +34,7 @@ NSString *kSquareCellReuseID = @"SquareCell";
 
 - (void)setupDataSource {
     dataSource = [NSMutableArray array];
-    for(int i = 1; i <= 20; i++) {
+    for(int i = 1; i <= 5; i++) {
         [dataSource addObject:@(i)];
     }
 }
@@ -65,7 +65,7 @@ NSString *kSquareCellReuseID = @"SquareCell";
     __weak HorizontalViewController *weakSelf = self;
     NSInteger maxValue = [[dataSource lastObject] integerValue];
 
-    int64_t delayInSeconds = 1.0;
+    int64_t delayInSeconds = 0.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
         [weakSelf.dataSource addObject:@(maxValue + 1)];
