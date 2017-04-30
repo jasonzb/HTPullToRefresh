@@ -27,6 +27,7 @@ NSString *kSquareCellReuseID = @"SquareCell";
     [self setupDataSource];
     [self setupPullToRefresh];
     [self.collectionView registerNib:[UINib nibWithNibName:@"SquareCell" bundle:nil] forCellWithReuseIdentifier:kSquareCellReuseID];
+    self.collectionView.backgroundColor = [UIColor whiteColor];
 }
 
 #pragma mark - helper
@@ -40,19 +41,10 @@ NSString *kSquareCellReuseID = @"SquareCell";
 
 - (void)setupPullToRefresh {
     __weak HorizontalViewController *weakSelf = self;
-
-    [self.collectionView addPullToRefreshWithActionHandler:^{
-        [weakSelf insertRowAtLeft];
-    } position:SVPullToRefreshPositionLeft];
-
-    [self.collectionView addPullToRefreshWithActionHandler:^{
+    
+    [self.collectionView addPullToRefresh:[ZBPullToRefreshView class] withActionHandler:^{
         [weakSelf insertRowAtRight];
     } position:SVPullToRefreshPositionRight];
-
-    for(SVPullToRefreshView *refreshView in self.collectionView.pullToRefreshViews) {
-        refreshView.titleLabel.font = [UIFont boldSystemFontOfSize:13];
-        refreshView.titleLabel.numberOfLines = 0;
-    }
 }
 
 - (void)insertRowAtLeft {

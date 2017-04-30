@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BD39F21D1EB58A870069E7F1 /* ZBPullToRefreshView.m in Sources */ = {isa = PBXBuildFile; fileRef = BD39F21C1EB58A870069E7F1 /* ZBPullToRefreshView.m */; };
 		F39ACCF81D326BB00095F4F3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F39ACCF71D326BB00095F4F3 /* main.m */; };
 		F39ACCFB1D326BB00095F4F3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F39ACCFA1D326BB00095F4F3 /* AppDelegate.m */; };
 		F39ACCFE1D326BB00095F4F3 /* HTViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F39ACCFD1D326BB00095F4F3 /* HTViewController.m */; };
@@ -28,6 +29,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BD39F21B1EB58A870069E7F1 /* ZBPullToRefreshView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZBPullToRefreshView.h; sourceTree = "<group>"; };
+		BD39F21C1EB58A870069E7F1 /* ZBPullToRefreshView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZBPullToRefreshView.m; sourceTree = "<group>"; };
 		F39ACCF31D326BAF0095F4F3 /* HTPullToRefreshDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HTPullToRefreshDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F39ACCF71D326BB00095F4F3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F39ACCF91D326BB00095F4F3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -146,6 +149,8 @@
 				F39ACD191D326C870095F4F3 /* UIScrollView+SVPullToRefresh.m */,
 				F39ACD261D33E0590095F4F3 /* NSString+HTPullToRefresh.h */,
 				F39ACD271D33E0590095F4F3 /* NSString+HTPullToRefresh.m */,
+				BD39F21B1EB58A870069E7F1 /* ZBPullToRefreshView.h */,
+				BD39F21C1EB58A870069E7F1 /* ZBPullToRefreshView.m */,
 			);
 			name = SVPullToRefresh;
 			path = ../SVPullToRefresh;
@@ -225,6 +230,7 @@
 			files = (
 				F39ACD2B1D351D170095F4F3 /* SquareCell.m in Sources */,
 				F39ACD1A1D326C870095F4F3 /* UIScrollView+SVPullToRefresh.m in Sources */,
+				BD39F21D1EB58A870069E7F1 /* ZBPullToRefreshView.m in Sources */,
 				F39ACCFE1D326BB00095F4F3 /* HTViewController.m in Sources */,
 				F39ACD221D33D4FB0095F4F3 /* VerticalViewController.m in Sources */,
 				F39ACD281D33E0590095F4F3 /* NSString+HTPullToRefresh.m in Sources */,

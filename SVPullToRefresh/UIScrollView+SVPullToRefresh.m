@@ -67,9 +67,39 @@ static char UIScrollViewInternalPullToRefreshViews;
 @property (nonatomic, strong) NSMutableArray *internalPullToRefreshViews;
 @end
 
+static char UIScrollViewPullToRefreshView;
+
 @implementation UIScrollView (SVPullToRefresh)
 
 @dynamic showsPullToRefresh;
+
+- (void)addPullToRefresh:(Class)pullToRefreshClass withActionHandler:(void (^)(void))actionHandler position:(SVPullToRefreshPosition)position
+{
+    NSAssert([pullToRefreshClass isSubclassOfClass:[SVPullToRefreshView class]], @"Your class for pull to refresh needs to inherit from `SVPullToRefreshView`");
+    
+    [self.pullToRefreshView removeFromSuperview];
+    CGRect rect = [SVPullToRefreshView rectForRefreshViewAtPosition:position scrollView:self];
+    SVPullToRefreshView *view = [[pullToRefreshClass alloc] initWithFrame:rect];
+    view.pullToRefreshActionHandler = actionHandler;
+    view.scrollView = self;
+    [self addSubview:view];
+    
+    view.position = position;
+    view.originalTopInset = self.contentInset.top;
+    view.originalBottomInset = self.contentInset.bottom;
+    view.originalLeftInset = self.contentInset.left;
+    view.originalRightInset = self.contentInset.right;
+    
+    [self.internalPullToRefreshViews addObject:view];
+    
+    self.pullToRefreshView = view;
+    self.showsPullToRefresh = YES;
+}
+
+- (void)addPullToRefresh:(Class)pullToRefreshClass withActionHandler:(void (^)(void))actionHandler
+{
+    [self addPullToRefresh:pullToRefreshClass withActionHandler:actionHandler position:SVPullToRefreshPositionTop];
+}
 
 - (void)addPullToRefreshWithActionHandler:(void (^)(void))actionHandler position:(SVPullToRefreshPosition)position {
     SVPullToRefreshView *view = [self pullToRefreshViewAtPosition:position];
@@ -135,8 +165,16 @@ static char UIScrollViewInternalPullToRefreshViews;
     }
 }
 
+- (void)setPullToRefreshView:(SVPullToRefreshView *)pullToRefreshView {
+    [self willChangeValueForKey:@"SVPullToRefreshView"];
+    objc_setAssociatedObject(self, &UIScrollViewPullToRefreshView,
+                             pullToRefreshView,
+                             OBJC_ASSOCIATION_ASSIGN);
+    [self didChangeValueForKey:@"SVPullToRefreshView"];
+}
+
 - (SVPullToRefreshView *)pullToRefreshView {
-    return self.internalPullToRefreshViews.firstObject;
+    return objc_getAssociatedObject(self, &UIScrollViewPullToRefreshView);
 }
 
 - (SVPullToRefreshView *)pullToRefreshViewAtPosition:(SVPullToRefreshPosition)position {
@@ -231,7 +269,7 @@ static char UIScrollViewInternalPullToRefreshViews;
             break;
         case SVPullToRefreshPositionRight:
             xOrigin = MAX(scrollView.contentSize.width, scrollView.bounds.size.width);
-            viewWidth = SVPullToRefreshViewWidth;
+            viewWidth = scrollView.contentOffset.x - (scrollView.contentSize.width - scrollView.bounds.size.width);
             viewHeight = scrollView.bounds.size.height;
             break;
 
@@ -485,8 +523,10 @@ static char UIScrollViewInternalPullToRefreshViews;
 #pragma mark - Observing
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if([keyPath isEqualToString:@"contentOffset"])
+    if([keyPath isEqualToString:@"contentOffset"]) {
         [self scrollViewDidScroll:[[change valueForKey:NSKeyValueChangeNewKey] CGPointValue]];
+        self.frame = [SVPullToRefreshView rectForRefreshViewAtPosition:self.position scrollView:self.scrollView];
+    }
     else if([keyPath isEqualToString:@"contentSize"]) {
         [self layoutSubviews];
 

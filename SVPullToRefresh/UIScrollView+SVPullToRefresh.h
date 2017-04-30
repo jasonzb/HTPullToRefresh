@@ -22,8 +22,12 @@ typedef NS_ENUM(NSUInteger, SVPullToRefreshPosition) {
     SVPullToRefreshPositionRight = 3
 };
 
-- (void)addPullToRefreshWithActionHandler:(void (^)(void))actionHandler;
-- (void)addPullToRefreshWithActionHandler:(void (^)(void))actionHandler position:(SVPullToRefreshPosition)position;
+- (void)addPullToRefreshWithActionHandler:(void (^)(void))actionHandler DEPRECATED_MSG_ATTRIBUTE("Use `addPullToRefresh:withActionHandler:` instead");
+- (void)addPullToRefreshWithActionHandler:(void (^)(void))actionHandler position:(SVPullToRefreshPosition)position DEPRECATED_MSG_ATTRIBUTE("Use `addPullToRefresh:withActionHandler:position:` instead");
+
+- (void)addPullToRefresh:(Class)pullToRefreshClass withActionHandler:(void (^)(void))actionHandler;
+- (void)addPullToRefresh:(Class)pullToRefreshClass withActionHandler:(void (^)(void))actionHandler position:(SVPullToRefreshPosition)position;
+
 - (void)triggerPullToRefresh; //only apply for the first SVPullToRefreshView in the pullToRefreshViews array
 - (void)triggerPullToRefreshAtPosition:(SVPullToRefreshPosition)position;
 
